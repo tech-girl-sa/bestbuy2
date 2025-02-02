@@ -41,6 +41,13 @@ class Product:
     def is_active(self) -> bool:
         return self.active
 
+    def __lt__(self, other_product):
+        return self.price < other_product.price
+
+    def __gt__(self, other_product):
+        return self.price > other_product.price
+
+
     def __str__(self):
         display = f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
         if getattr(self.promotion, "percent", "") != 0:
