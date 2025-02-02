@@ -41,7 +41,7 @@ class Product:
     def is_active(self) -> bool:
         return self.active
 
-    def show(self) -> str:
+    def __str__(self):
         display = f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
         if getattr(self.promotion, "percent", "") != 0:
             return f"{display}, Promotion: {self.promotion}"
@@ -63,7 +63,7 @@ class NonStockedProduct(Product):
         super().__init__(name,price,quantity)
         self.activate()
 
-    def show(self) -> str:
+    def __str__(self) -> str:
         display = f"{self.name}, Price: {self.price}"
         if getattr(self.promotion, "percent", "") != 0:
             return f"{display}, Promotion: {self.promotion}"
@@ -90,8 +90,8 @@ class LimitedProduct(Product):
         purchase = super().buy(quantity)
         return purchase
 
-    def show(self) -> str:
-        display_message = super().show()
+    def __str__(self) -> str:
+        display_message = super().__str__()
         return f"{display_message}, Maximum: {self.maximum}"
 
 
