@@ -4,15 +4,16 @@
 class Product:
 
     def __init__(self, name, price, quantity):
-        if not name and type(name) != str:
+        if (not name) or type(name) != str:
             raise ValueError("Invalid name.")
         if  price < 0 or quantity < 0:
             raise ValueError("Invalid price or quantity. Value needs to be positive")
-
         self.name = name
         self.price = price
         self.quantity = quantity
         self.active = True
+        if self.quantity == 0:
+            self.deactivate()
 
     def get_quantity(self)  -> float :
         return self.quantity
