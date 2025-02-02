@@ -27,3 +27,7 @@ class Store:
             price = product.buy(quantity)
             total_price += price
         return total_price
+
+    def __contains__(self, product:Product):
+        similar_products = list(filter( lambda x: x.name == product.name and x.price == product.price , self.products))
+        return len(similar_products) > 0
