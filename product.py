@@ -1,19 +1,28 @@
-
+from promotion import PercentDiscount, Promotion
 
 
 class Product:
 
-    def __init__(self, name, price, quantity):
+    def __init__(self, name, price, quantity, promotion=PercentDiscount("No promotion",0)):
         if (not name) or type(name) != str:
             raise ValueError("Invalid name.")
         if  price < 0 or quantity < 0:
             raise ValueError("Invalid price or quantity. Value needs to be positive")
         self.name = name
         self.price = price
+        self.promotion = promotion
         self.quantity = quantity
         self.active = True
         if self.quantity == 0:
             self.deactivate()
+
+    def get_promotion(self):
+        return self.promotion
+
+    def set_promotion(self, promotion):
+        if not isinstance(promotion,Promotion):
+            raise ValueError("Wrong promotion type")
+        self.promotion = promotion
 
     def get_quantity(self)  -> float :
         return self.quantity
@@ -33,17 +42,20 @@ class Product:
         return self.active
 
     def show(self) -> str:
-        return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
+        display = f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
+        if getattr(self.promotion, "percent", "") != 0:
+            return f"{display}, Promotion: {self.promotion}"
+        return display
 
     def buy(self, quantity) -> float:
         if  quantity < 0:
             raise ValueError("Invalid quantity. Value needs to be positive")
-        if quantity > self.quantity:
+        if not isinstance(self, NonStockedProduct) and quantity > self.quantity:
             raise ValueError("We don't have the entered quantity in stock.")
         self.quantity -= quantity
         if self.quantity == 0:
             self.deactivate()
-        return quantity * self.price
+        return self.promotion.apply_promotion(self, quantity)
 
 
 class NonStockedProduct(Product):
@@ -52,7 +64,10 @@ class NonStockedProduct(Product):
         self.activate()
 
     def show(self) -> str:
-        return f"{self.name}, Price: {self.price}"
+        display = f"{self.name}, Price: {self.price}"
+        if getattr(self.promotion, "percent", "") != 0:
+            return f"{display}, Promotion: {self.promotion}"
+        return display
 
     def buy(self, quantity) -> float:
         purchase = super().buy(quantity)
@@ -78,3 +93,5 @@ class LimitedProduct(Product):
     def show(self) -> str:
         display_message = super().show()
         return f"{display_message}, Maximum: {self.maximum}"
+
+
