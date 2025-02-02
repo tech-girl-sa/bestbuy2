@@ -1,3 +1,4 @@
+import copy
 from typing import List
 
 from product import Product
@@ -9,7 +10,12 @@ class Store:
         self.products = products
 
     def add_product(self, product):
-        self.products.append(product)
+        if product in self.products:
+            similar_product = list(filter(lambda x: x.name == product.name and x.price == product.price,
+                                          self.products))[0]
+            similar_product.quantity = similar_product.quantity+product.quantity
+        else:
+            self.products.append(product)
 
     def remove_product(self, product):
         self.products.remove(product)
@@ -31,3 +37,11 @@ class Store:
     def __contains__(self, product:Product):
         similar_products = list(filter( lambda x: x.name == product.name and x.price == product.price , self.products))
         return len(similar_products) > 0
+
+    def __add__(self, other_store):
+        new_store = copy.deepcopy(self)
+        for product in other_store.products:
+            new_store.add_product(product)
+        return new_store
+
+

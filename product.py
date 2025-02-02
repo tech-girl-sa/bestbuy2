@@ -9,28 +9,46 @@ class Product:
         if  price < 0 or quantity < 0:
             raise ValueError("Invalid price or quantity. Value needs to be positive")
         self.name = name
-        self.price = price
-        self.promotion = promotion
-        self.quantity = quantity
+        self._price = price
+        self._promotion = promotion
+        self._quantity = quantity
         self.active = True
         if self.quantity == 0:
             self.deactivate()
 
-    def get_promotion(self):
-        return self.promotion
+    @property
+    def price(self):
+        return self._price
 
-    def set_promotion(self, promotion):
+    @price.setter
+    def promotion(self, price):
+        if price < 0:
+            raise ValueError("Invalid price or quantity. Value needs to be positive")
+        self.price = price
+
+    @property
+    def promotion(self):
+        return self._promotion
+
+    @promotion.setter
+    def promotion(self, promotion):
         if not isinstance(promotion,Promotion):
             raise ValueError("Wrong promotion type")
-        self.promotion = promotion
+        self._promotion = promotion
 
-    def get_quantity(self)  -> float :
-        return self.quantity
+    @property
+    def quantity(self)  -> float :
+        return self._quantity
 
-    def set_quantity(self, quantity):
-        self.quantity = quantity
-        if self.quantity == 0:
+    @quantity.setter
+    def quantity(self, quantity):
+        if  quantity < 0:
+            raise ValueError("Invalid price or quantity. Value needs to be positive")
+        self._quantity = quantity
+        if quantity == 0:
             self.deactivate()
+        else:
+            self.activate()
 
     def deactivate(self):
         self.active = False
@@ -68,6 +86,7 @@ class Product:
 class NonStockedProduct(Product):
     def __init__(self, name, price, quantity=0):
         super().__init__(name,price,quantity)
+        self._quantity = 0
         self.activate()
 
     def __str__(self) -> str:
@@ -82,8 +101,11 @@ class NonStockedProduct(Product):
         self.activate()
         return purchase
 
-    def set_quantity(self, quantity=0):
-        self.quantity = 0
+
+    @Product.quantity.setter
+    def quantity(self, quantity=0):
+        self._quantity = 0
+        self.activate()
 
 
 class LimitedProduct(Product):

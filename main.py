@@ -16,9 +16,9 @@ third_one_free = ThirdOneFree("Third One Free!")
 thirty_percent = PercentDiscount("30% off!", percent=30)
 
 # Add promotions to products
-product_list[0].set_promotion(second_half_price)
-product_list[1].set_promotion(third_one_free)
-product_list[3].set_promotion(thirty_percent)
+product_list[0].promotion = second_half_price
+product_list[1].promotion = third_one_free
+product_list[3].promotion = thirty_percent
 
 best_buy = Store(product_list)
 
@@ -72,7 +72,7 @@ def get_product_quantity(product:Product):
             if user_choice == "":
                 return
             user_choice = int(user_choice)
-            if not isinstance(product, NonStockedProduct) and user_choice not in range(0, product.get_quantity()+1):
+            if not isinstance(product, NonStockedProduct) and user_choice not in range(0, product.quantity + 1):
                 raise ValueError("We don't have the entered quantity")
             if isinstance(product, LimitedProduct) and user_choice > product.maximum:
                 raise ValueError(f"his product is limited. cannot buy more than {product.maximum} times in an order")
@@ -136,7 +136,7 @@ def main():
     print(bose)
     print(mac)
 
-    bose.set_quantity(1000)
+    bose.quantity = 1000
     print(bose)
     product_list = [Product("MacBook Air M2", price=1450, quantity=100),
                     Product("Bose QuietComfort Earbuds", price=250, quantity=500),
@@ -146,11 +146,24 @@ def main():
     products = store.get_all_products()
     print(store.get_total_quantity())
     print(store.order([(products[0], 1), (products[1], 2)]))
+    # setup initial stock of inventory
+    mac = Product("MacBook Air M2", price=1450, quantity=100)
+    bose = Product("Bose QuietComfort Earbuds", price=250, quantity=500)
+    pixel = LimitedProduct("Google Pixel 7", price=500, quantity=250, maximum=1)
 
-
+    best_buy = Store([mac, bose])
+    try:
+        mac.price = -100
+    except Exception:
+        print("error")# Should give error
+    print(mac)  # Should print `MacBook Air M2, Price: $1450 Quantity:100`
+    print(mac > bose)  # Should print True
+    print(mac in best_buy)  # Should print True
+    print(pixel in best_buy)  # Should print False
 
 
 if __name__ == '__main__':
     start(best_buy)
+
 
 
