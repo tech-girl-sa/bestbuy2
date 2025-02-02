@@ -1,9 +1,11 @@
-from product import Product
+from product import Product, LimitedProduct, NonStockedProduct
 from store import Store
 
 product_list = [ Product("MacBook Air M2", price=1450, quantity=100),
                  Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-                 Product("Google Pixel 7", price=500, quantity=250)
+                 Product("Google Pixel 7", price=500, quantity=250),
+                 NonStockedProduct("Windows License", price=125),
+                 LimitedProduct("Shipping", price=10, quantity=250, maximum=1)
                ]
 best_buy = Store(product_list)
 
@@ -57,15 +59,17 @@ def get_product_quantity(product:Product):
             if user_choice == "":
                 return
             user_choice = int(user_choice)
-            if user_choice not in range(0, product.get_quantity()+1):
-                raise ValueError
+            if not isinstance(product, NonStockedProduct) and user_choice not in range(0, product.get_quantity()+1):
+                raise ValueError("We don't have the entered quantity")
+            if isinstance(product, LimitedProduct) and user_choice > product.maximum:
+                raise ValueError(f"his product is limited. cannot buy more than {product.maximum} times in an order")
             return user_choice
-        except ValueError:
-            print("We don't have the entered quantity")
+        except ValueError as e:
+            print(e)
 
 
 def get_user_order(products):
-    shopping_list = []
+    shopping_dict = {}
     while True:
         product = get_user_product(products)
         if not product:
@@ -73,8 +77,16 @@ def get_user_order(products):
         amount = get_product_quantity(product)
         if not amount:
             break
-        shopping_list.append((product, amount))
+        if product not in shopping_dict:
+            shopping_dict[product] = amount
+        else:
+            amount = shopping_dict[product] + amount
+            if isinstance(product, LimitedProduct) and amount > product.maximum:
+                print(f"his product is limited. cannot buy more than {product.maximum} times in an order")
+                continue
+            shopping_dict[product] += amount
         print("\nProduct added to the list!\n")
+    shopping_list = shopping_dict.items()
     return shopping_list
 
 

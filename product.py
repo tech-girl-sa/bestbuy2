@@ -44,3 +44,37 @@ class Product:
         if self.quantity == 0:
             self.deactivate()
         return quantity * self.price
+
+
+class NonStockedProduct(Product):
+    def __init__(self, name, price, quantity=0):
+        super().__init__(name,price,quantity)
+        self.activate()
+
+    def show(self) -> str:
+        return f"{self.name}, Price: {self.price}"
+
+    def buy(self, quantity) -> float:
+        purchase = super().buy(quantity)
+        self.quantity = 0
+        self.activate()
+        return purchase
+
+    def set_quantity(self, quantity=0):
+        self.quantity = 0
+
+
+class LimitedProduct(Product):
+    def __init__(self, name, price, quantity, maximum):
+        super().__init__(name,price,quantity)
+        self.maximum = maximum
+
+    def buy(self, quantity) -> float:
+        if quantity > self.maximum:
+            raise ValueError(f"This product is limited. cannot buy more than {self.maximum} times in an order")
+        purchase = super().buy(quantity)
+        return purchase
+
+    def show(self) -> str:
+        display_message = super().show()
+        return f"{display_message}, Maximum: {self.maximum}"
