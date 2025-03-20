@@ -97,7 +97,7 @@ def get_user_order(products):
             if isinstance(product, LimitedProduct) and amount > product.maximum:
                 print(f"his product is limited. cannot buy more than {product.maximum} times in an order")
                 continue
-            shopping_dict[product] += amount
+            shopping_dict[product] = amount
         print("\nProduct added to the list!\n")
     shopping_list = shopping_dict.items()
     return shopping_list
