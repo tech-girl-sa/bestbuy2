@@ -23,6 +23,7 @@ product_list[3].promotion = thirty_percent
 best_buy = Store(product_list)
 
 def get_user_input():
+    """Get user choice for the action he wants to perform"""
     menu = """
             Store Menu
             ----------
@@ -43,15 +44,18 @@ def get_user_input():
 
 
 def list_products(store:Store):
+    """Show list of the products in the Store"""
     print("------")
     for index, product in enumerate(store.get_all_products()):
         print(f"{index+1}. {product}")
     print("------")
 
 def show_total_amount(store):
+    """Show number of products available in the store"""
     print(f"\nTotal of {store.get_total_quantity()} items in store\n")
 
 def get_user_product(products):
+    """Get User input of the product to order"""
     while True:
         try:
             print("When you want to finish order, enter empty text.")
@@ -66,6 +70,7 @@ def get_user_product(products):
             print("Please enter a valid product index")
 
 def get_product_quantity(product:Product):
+    """Get User input of the quantity of product to order"""
     while True:
         try:
             user_choice = input("What amount do you want? ")
@@ -82,6 +87,7 @@ def get_product_quantity(product:Product):
 
 
 def get_user_order(products):
+    """Get user list of products to order"""
     shopping_dict = {}
     while True:
         product = get_user_product(products)
@@ -104,6 +110,9 @@ def get_user_order(products):
 
 
 def order(store):
+    """Make an order for the list of products chosen by the user and Show total
+    payment amount.
+    """
     list_products(store)
     shopping_list = get_user_order(store.get_all_products())
     price = store.order(shopping_list)
@@ -112,6 +121,7 @@ def order(store):
 
 
 def start(store:Store):
+    """Main loop of the Program"""
     while True:
         user_input = get_user_input()
         dispatcher = {

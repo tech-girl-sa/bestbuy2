@@ -6,6 +6,12 @@ from product import Product
 
 
 class Store:
+    """
+    Represents a Stores and manage all actions that can be performed on it.
+    adding and removing products from it, showing all available products and making orders.
+    A Store is composed of a list of Product instances.
+    """
+
     def __init__(self, products):
         self.products = products
 

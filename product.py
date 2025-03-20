@@ -2,7 +2,7 @@ from promotion import PercentDiscount, Promotion
 
 
 class Product:
-
+    """Main class for products in the store"""
     def __init__(self, name, price, quantity, promotion=PercentDiscount("No promotion",0)):
         if (not name) or type(name) != str:
             raise ValueError("Invalid name.")
@@ -84,6 +84,7 @@ class Product:
 
 
 class NonStockedProduct(Product):
+    """Non Physical products they don't have a quantity since they can't be stocked in the store."""
     def __init__(self, name, price, quantity=0):
         super().__init__(name,price,quantity)
         self._quantity = 0
@@ -109,6 +110,8 @@ class NonStockedProduct(Product):
 
 
 class LimitedProduct(Product):
+    """Limited products are products that have a limit set for one order.
+    User cannot order more than maximum for a single order."""
     def __init__(self, name, price, quantity, maximum):
         super().__init__(name,price,quantity)
         self.maximum = maximum
